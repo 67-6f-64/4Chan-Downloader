@@ -1,0 +1,139 @@
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JTextField;
+import java.awt.BorderLayout;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
+import java.awt.event.ActionEvent;
+import javax.swing.JTextPane;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+import javax.swing.JLabel;
+
+public class window {
+
+	private JFrame frmchanImageDownloader;
+	private JTextField textField;
+	main M = new main();
+	private JTextField textField_1;
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					window window = new window();
+					window.frmchanImageDownloader.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the application.
+	 */
+	public window() {
+		initialize();
+	}
+
+	/**
+	 * Initialize the contents of the frame.
+	 */
+	private void initialize() {
+		frmchanImageDownloader = new JFrame();
+		frmchanImageDownloader.setTitle("4Chan image downloader");
+		frmchanImageDownloader.setBounds(100, 100, 783, 444);
+		frmchanImageDownloader.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frmchanImageDownloader.getContentPane().setLayout(null);
+		
+		textField = new JTextField();
+		textField.setBounds(42, 95, 682, 20);
+		frmchanImageDownloader.getContentPane().add(textField);
+		textField.setColumns(10);
+		
+		JButton btnNewButton = new JButton("Download folder");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				
+				 File file = null;
+				 JFileChooser chooser = new JFileChooser();
+				 chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+				 int returnValue = chooser.showOpenDialog( null ) ;
+				 
+				 
+				 String filePath = null;
+				if( returnValue == JFileChooser.APPROVE_OPTION ) {
+				        
+						file = chooser.getSelectedFile();
+				 }
+				 if(file != null)
+				 {
+					 filePath = file.getPath();
+				 } 
+				 
+				 textField_1.setText(filePath);
+			}
+		});
+		btnNewButton.setBounds(608, 49, 116, 23);
+		frmchanImageDownloader.getContentPane().add(btnNewButton);
+		
+		JTextPane textPane = new JTextPane();
+		textPane.setBounds(42, 126, 695, 231);
+		frmchanImageDownloader.getContentPane().add(textPane);
+		
+		JButton btnNewButton_1 = new JButton("Start");
+		btnNewButton_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				
+				
+				
+				 Document doc;
+				try {
+					doc = Jsoup.connect(textField.getText()).get();
+				} catch (IOException ee) {
+					// TODO Auto-generated catch block
+					ee.printStackTrace();
+					return;
+				}  
+				textPane.setText(textPane.getText() + "\n" +  doc.title());
+				 Elements newsHeadlines = doc.select("a[href*=i.4cdn.org]");
+				 int i = 0;
+				 for (Element headline : newsHeadlines) {
+					 textPane.setText(textPane.getText() + "\n File downloading: " + headline.absUrl("href") +  " " + i);
+					 i = i + 1;
+					 
+					boolean f =  new File( "c:\\Users\\charl\\Documents\\4chanDownload\\" + doc.title().replace("\\", "").replace("?", "")  ).mkdirs();
+					//textPane.setText(textPane.getText() + "\n" + " Folder created?" + f + " - " +  "c:\\Users\\charl\\Documents\\4chanDownload\\" + doc.title().replace("\\", "").replace("/", ""));
+					 download d = new download(headline.absUrl("href"),doc.title().replace("\\", "").replace("?",""));
+				 }
+				 
+				
+			}
+		});
+		btnNewButton_1.setBounds(297, 368, 89, 23);
+		frmchanImageDownloader.getContentPane().add(btnNewButton_1);
+		
+		textField_1 = new JTextField();
+		textField_1.setBounds(39, 50, 559, 20);
+		frmchanImageDownloader.getContentPane().add(textField_1);
+		textField_1.setColumns(10);
+		
+		JLabel lblNewLabel = new JLabel("URL to download from:");
+		lblNewLabel.setBounds(38, 72, 125, 23);
+		frmchanImageDownloader.getContentPane().add(lblNewLabel);
+	}
+}

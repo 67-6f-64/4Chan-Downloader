@@ -1,0 +1,88 @@
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.channels.Channels;
+import java.nio.channels.FileChannel;
+import java.nio.channels.ReadableByteChannel;
+
+public class download {
+		
+		public download() {
+			
+			
+		}
+		
+		public download(String aurl,String dir) {
+			
+			
+			
+			
+
+			 Document doc;
+			try {
+				doc = Jsoup.connect(textField.getText()).get();
+			} catch (IOException ee) {
+				// TODO Auto-generated catch block
+				ee.printStackTrace();
+				return;
+			}  
+			textPane.setText(textPane.getText() + "\n" +  doc.title());
+			 Elements newsHeadlines = doc.select("a[href*=i.4cdn.org]");
+			 int i = 0;
+			 for (Element headline : newsHeadlines) {
+				 textPane.setText(textPane.getText() + "\n File downloading: " + headline.absUrl("href") +  " " + i);
+				 i = i + 1;
+				 
+				boolean f =  new File( "c:\\Users\\charl\\Documents\\4chanDownload\\" + doc.title().replace("\\", "").replace("?", "")  ).mkdirs();
+				//textPane.setText(textPane.getText() + "\n" + " Folder created?" + f + " - " +  "c:\\Users\\charl\\Documents\\4chanDownload\\" + doc.title().replace("\\", "").replace("/", ""));
+				 download d = new download(headline.absUrl("href"),doc.title().replace("\\", "").replace("?",""));
+			 }
+			
+			
+			
+			
+			
+			ReadableByteChannel readChannel = null;
+			String fileName = aurl.substring( aurl.lastIndexOf('/')+1, aurl.length() );
+			System.out.println("url : " + aurl);
+			System.out.println("Fn : " + fileName);
+			System.out.println("dir : " + dir);
+			
+			
+			
+			
+			
+			
+			
+			
+			try {
+				 readChannel = Channels.newChannel(new URL(aurl).openStream());
+			} catch (MalformedURLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+				
+			FileOutputStream fileOS = null;
+			
+			
+			try {
+				fileOS = new FileOutputStream("c:/Users/charl/Documents/4chanDownload/" + dir + "/" + fileName);
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			FileChannel writeChannel = fileOS.getChannel();
+			try {
+				writeChannel.transferFrom(readChannel, 0, Long.MAX_VALUE);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+	}
