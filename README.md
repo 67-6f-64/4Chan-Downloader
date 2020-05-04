@@ -1,8 +1,8 @@
 # 4Chan-Downloader
 does the thing
 
-Look, it downloads imgs from 4chan,
-will add video downloading soon / if people request it. 
+Downloads images / webms / anything else from a thread in 4chan
+can modify to search other boards too
 
 java so should run on most platforms. put in a request for features or anything else. 
 
